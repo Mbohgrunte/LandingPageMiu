@@ -1,5 +1,5 @@
 import { A, useLocation } from "@solidjs/router";
-import { createEffect, createSignal, Show, type ParentComponent } from "solid-js";
+import { createEffect, createSignal, type ParentComponent } from "solid-js";
 import { Icon } from "./components/icon";
 
 const App: ParentComponent = (props) => {
@@ -48,36 +48,56 @@ const App: ParentComponent = (props) => {
 						Contact Us
 					</A>
 
-					<button onClick={() => setIsMenuShown((v) => !v)} class="block lg:hidden p-2.5">
+					<button
+						onClick={() => setIsMenuShown((v) => !v)}
+						class="block lg:hidden p-2.5"
+						aria-label={isMenuShown() ? "Close navigation menu" : "Open navigation menu"}
+						aria-expanded={isMenuShown()}
+						aria-controls="mobile-navigation"
+					>
 						<Icon name="menu" size="xl"></Icon>
 					</button>
 				</div>
-				<Show when={isMenuShown()}>
-					<div class="visible lg:hidden py-8">
-						<ul class="space-y-4">
-							<li>
-								<a class="hover:text-yellow-400 transition-colors" href="/about">
-									About Us
-								</a>
-							</li>
-							<li>
-								<a class="hover:text-yellow-400 transition-colors" href="/">
-									Home
-								</a>
-							</li>
-							<li>
-								<a class="hover:text-yellow-400 transition-colors" href="/about#product">
-									Product
-								</a>
-							</li>
-							<li class="py-2">
-								<A href="/contact" class="bg-white px-4 py-1.5 rounded-xl text-neutral-700 font-bold">
-									Contact Us
-								</A>
-							</li>
-						</ul>
+				<div
+					id="mobile-navigation"
+					class={`grid overflow-hidden transition-[grid-template-rows] duration-300 ease-in-out lg:hidden ${
+						isMenuShown() ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+					}`}
+					aria-hidden={!isMenuShown()}
+					inert={!isMenuShown()}
+				>
+					<div class="min-h-0 overflow-hidden">
+						<div
+							class={`py-8 transition-opacity duration-200 ${isMenuShown() ? "opacity-100" : "opacity-0"}`}
+						>
+							<ul class="space-y-4">
+								<li>
+									<a class="hover:text-yellow-400 transition-colors" href="/about">
+										About Us
+									</a>
+								</li>
+								<li>
+									<a class="hover:text-yellow-400 transition-colors" href="/">
+										Home
+									</a>
+								</li>
+								<li>
+									<a class="hover:text-yellow-400 transition-colors" href="/about#product">
+										Product
+									</a>
+								</li>
+								<li class="py-2">
+									<A
+										href="/contact"
+										class="bg-white px-4 py-1.5 rounded-xl text-neutral-700 font-bold"
+									>
+										Contact Us
+									</A>
+								</li>
+							</ul>
+						</div>
 					</div>
-				</Show>
+				</div>
 			</div>
 
 			{props.children}
