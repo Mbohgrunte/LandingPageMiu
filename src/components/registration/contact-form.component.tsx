@@ -1,5 +1,4 @@
-import { Component } from "solid-js";
-import { createStore } from "solid-js/store";
+import { createSignal, type Component } from "solid-js";
 import { Api } from "../../api";
 
 type ContactFormProps = {
@@ -8,77 +7,104 @@ type ContactFormProps = {
 
 export const ContactForm: Component<ContactFormProps> = (props) => {
 	const api = new Api();
+	const [isSubmitting, setIsSubmitting] = createSignal(false);
+	const [successMessage, setSuccessMessage] = createSignal("");
+	const [errorMessage, setErrorMessage] = createSignal("");
 
-	const [data, setData] = createStore({
-		name: "",
-		email: "",
-		address: "",
-		description: "",
-	});
+	const onSubmit = async (event: SubmitEvent) => {
+		event.preventDefault();
+		const form = event.currentTarget;
+		if (!(form instanceof HTMLFormElement)) {
+			setErrorMessage("Form tidak dapat diproses. Silakan muat ulang halaman dan coba kembali.");
+			return;
+		}
 
-	const onSubmit = async (e: Event) => {
-		e.preventDefault();
+		setIsSubmitting(true);
+		setSuccessMessage("");
+		setErrorMessage("");
+
+		const formData = new FormData(form);
+
 		try {
-			await api.contactUsSubmission(data);
-			alert("Pesan berhasil terkirim, kami akan segera menghubungi Anda!");
-		} catch {
-			// TODO handle
+			await api.contactUsSubmission({
+				name: String(formData.get("name") ?? ""),
+				email: String(formData.get("email") ?? ""),
+				address: String(formData.get("company") ?? ""),
+				description: String(formData.get("message") ?? ""),
+			});
+			setSuccessMessage("Pesan Anda berhasil dikirim. Tim kami akan segera menghubungi Anda.");
+			form.reset();
+		} catch (error) {
+			setErrorMessage(error instanceof Error ? error.message : "Pesan gagal dikirim. Silakan coba kembali.");
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
 
 	return (
-		<div class="flex flex-col grow space-y-4 py-12 text-sky-950">
-			<form onSubmit={onSubmit} class="flex flex-col space-y-6 bg-white p-8 rounded shadow-xl">
-				<h3 class="text-xl lg:text-2xl font-bold space-x-1.5">{props.title}</h3>
+		<form class="contact-form" onSubmit={onSubmit}>
+			<h2>{props.title}</h2>
+			<p class="contact-form__description">
+				Konsultasikan kebutuhan digitalisasi proses bisnis Anda bersama tim kami.
+			</p>
 
-				<div class="space-y-2">
-					<div>Name</div>
-					<input
-						type="text"
-						class="bg-sky-700/25 px-4 py-2.5 w-full rounded"
-						onInput={(e) => setData("name", e.currentTarget.value)}
-						minLength={3}
-						maxLength={50}
-						placeholder="Lorem"
-					/>
-				</div>
+			{successMessage() && (
+				<p class="contact-form__success" role="status">
+					{successMessage()}
+				</p>
+			)}
+			{errorMessage() && (
+				<p class="contact-form__error-summary" role="alert">
+					{errorMessage()}
+				</p>
+			)}
 
-				<div class="space-y-2">
-					<div>Mail</div>
-					<input
-						type="email"
-						class="bg-sky-700/25 px-4 py-2.5 w-full rounded"
-						onInput={(e) => setData("email", e.currentTarget.value)}
-						placeholder="johndoe@mail.net"
-					/>
-				</div>
+			<label for="contact-name">Nama</label>
+			<input
+				id="contact-name"
+				name="name"
+				type="text"
+				autocomplete="name"
+				placeholder="Nama lengkap"
+				maxlength="120"
+				required
+			/>
 
-				<div class="space-y-2">
-					<div>Address</div>
-					<input
-						type="text"
-						class="bg-sky-700/25 px-4 py-2.5 w-full rounded"
-						minLength={3}
-						maxLength={250}
-						onInput={(e) => setData("address", e.currentTarget.value)}
-						placeholder="Capitol, ID"
-					/>
-				</div>
+			<label for="contact-email">Email</label>
+			<input
+				id="contact-email"
+				name="email"
+				type="email"
+				autocomplete="email"
+				placeholder="nama@perusahaan.com"
+				maxlength="255"
+				required
+			/>
 
-				<div class="space-y-2">
-					<div>Description</div>
-					<textarea
-						minLength={10}
-						maxLength={1000}
-						class="bg-sky-700/25 px-4 py-2.5 min-h-12 h-32 w-full rounded"
-						onInput={(e) => setData("description", e.currentTarget.value)}
-					/>
-				</div>
+			<label for="contact-company">Perusahaan</label>
+			<input
+				id="contact-company"
+				name="company"
+				type="text"
+				autocomplete="organization"
+				placeholder="Nama perusahaan"
+				maxlength="255"
+			/>
 
-				<button type="submit" class="w-full text-white bg-sky-900 p-4 rounded">
-					Send Message
-				</button>
-			</form>
-		</div>
+			<label for="contact-message">Deskripsi</label>
+			<textarea
+				id="contact-message"
+				name="message"
+				rows="4"
+				maxlength="5000"
+				placeholder="Ceritakan kebutuhan Anda..."
+				required
+			/>
+
+			<p class="contact-form__note">Pesan Anda akan dikirim langsung ke tim kami.</p>
+			<button type="submit" disabled={isSubmitting()}>
+				{isSubmitting() ? "Mengirim..." : "Kirim Pesan"} <span aria-hidden="true">→</span>
+			</button>
+		</form>
 	);
 };

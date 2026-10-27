@@ -1,201 +1,243 @@
-import { Component, createSignal, Show } from "solid-js";
-import { Icon } from "../components/icon";
-import { Registration } from "../components/registration";
+import { A } from "@solidjs/router";
+import { For, type Component } from "solid-js";
 
-type ProductProps = {
-	title: string;
-	description: string;
-	imageUrl: string;
-};
+const solutions = [
+	{
+		title: "IT Inventory App (ERP)",
+		image: "/images/home-it-inventory.png",
+		alt: "Ilustrasi dashboard IT Inventory",
+		description:
+			"Kami percaya efisiensi bukan hanya soal angka, tapi tentang bagaimana teknologi mempermudah manusia. Melalui IT Inventory App, perusahaan dapat memantau seluruh perangkat, lisensi, dan aset digital secara real-time — tanpa lagi laporan manual yang memakan waktu.",
+	},
+	{
+		title: "CN App",
+		image: "/images/home-cn-app.png",
+		alt: "Ilustrasi pengiriman dan dokumen digital",
+		description:
+			"Dalam dunia bisnis yang serba cepat, komunikasi internal yang efisien adalah segalanya. Dengan CN App berbasis CEISA 4.0, kami membantu perusahaan menyatukan data lintas departemen melalui sistem yang aman dan mudah diakses.",
+	},
+	{
+		title: "Basic Internal App",
+		image: "/images/home-basic-app.png",
+		alt: "Ilustrasi aplikasi bisnis dan pelacakan barang",
+		description:
+			"Bagi banyak perusahaan kecil dan menengah, digitalisasi sering terdengar mahal dan rumit. Kami ingin mengubah pandangan itu. Melalui Internal App, kami membantu tim Anda beralih dari proses manual ke sistem digital yang sederhana namun efektif — mulai dari pengajuan approval, absensi, hingga manajemen gudang.",
+	},
+];
 
-const Product: Component<ProductProps> = (props) => {
-	return (
-		<div class="relative flex flex-col space-y-6 justify-center bg-white rounded-xl py-12 px-6 text-sky-950 pr-48">
-			<img class="absolute w-48 h-auto top-[-25%] right-0" src={props.imageUrl}></img>
+const projects = [
+	{
+		title: "Regional",
+		image: "/images/home-city.png",
+		alt: "Panorama kawasan perkotaan",
+		description:
+			"Dari Pulau Jawa hingga Pulau Sumatera, kami telah berkolaborasi dengan lebih dari 30 perusahaan dalam mengembangkan aplikasi digital yang meningkatkan efisiensi operasional dan keandalan data. Setiap proyek kami dirancang dengan pendekatan profesional, hasil nyata, dan teknologi terkini untuk mendorong pertumbuhan bisnis klien kami.",
+	},
+	{
+		title: "CEISA Professional",
+		image: "/images/home-ceisa.png",
+		alt: "CEISA 4.0, Customs-Excise Information System and Automation",
+		description:
+			"Kami turut berkontribusi dalam pengembangan sistem CEISA 4.0 dengan mendukung digitalisasi proses ekspor-impor Indonesia melalui platform yang aman, modern, dan terintegrasi dengan kebutuhan industri. Solusi IT Inventory kami membantu perusahaan menyiapkan, mengirim, dan memantau dokumen kepabeanan yang terhubung dengan CEISA 4.0 secara lebih mudah, cepat, dan efisien, sekaligus meningkatkan transparansi alur kerja dan data antar lembaga.",
+	},
+	{
+		title: "Widely Diverse Partners",
+		image: "/images/home-team.png",
+		alt: "Tim profesional berdiskusi bersama",
+		description:
+			"Mulai dari sistem inventaris IT, aplikasi internal kantor, hingga platform CN App (CEISA 4.0), kami membantu perusahaan meningkatkan efisiensi, akurasi, dan pertumbuhan bisnis melalui teknologi yang andal dan terukur. Fleksibilitas kami dalam menyesuaikan sistem membuat setiap aplikasi menjadi relevan, scalable, dan mudah diadopsi oleh tim internal klien.",
+	},
+];
 
-			<h3 class="text-2xl font-bold">{props.title}</h3>
-			<div class="">{props.description}</div>
-			{/* TODO */}
-			{/* <button class="rounded bg-sky-700/75 px-4 py-2 max-w-max font-medium cursor-pointer">Learn More</button> */}
-		</div>
-	);
-};
-
-const Insight: Component<{
-	title: string;
-	description: string;
-	imageUrl: string;
-}> = (props) => {
-	return (
-		<div class="flex flex-col space-y-4 bg-gray-100 p-4 rounded-xl text-sky-950">
-			<img src={props.imageUrl} class="max-h-64 rounded-xl object-cover" />
-			<div class="px-2 py-4 space-y-2.5">
-				<h3 class="text-lg font-semibold">{props.title}</h3>
-				<div>{props.description}</div>
-			</div>
-		</div>
-	);
-};
-
-const Faq: Component<{
-	title: string;
-	description: string;
-}> = (props) => {
-	const [isShown, setIsShown] = createSignal(false);
-
-	return (
-		<div class="flex flex-col space-y-4 max-w-5xl w-full">
-			<div
-				class="flex space-x-4 items-center p-4 pr-8 w-full rounded cursor-pointer"
-				classList={{
-					"bg-sky-700/75": !isShown(),
-					"bg-sky-700": isShown(),
-				}}
-				onClick={() => setIsShown((v) => !v)}
-			>
-				<Icon name={isShown() ? "chevronDown" : "chevronRight"} size="xl" class="text-white" />
-				<div class="font-medium text-white">{props.title}</div>
-			</div>
-
-			<Show when={isShown()}>
-				<p class="px-8 text-sky-950">{props.description}</p>
-			</Show>
-		</div>
-	);
-};
+const faqs = [
+	{
+		question: "Apa itu IT Inventory App dan bagaimana manfaatnya bagi bisnis?",
+		answer:
+			"IT Inventory App cocok untuk perusahaan yang ingin mendapatkan fasilitas seperti KB, GB, KEK, KITE, dll. App ini memberikan kemudahan untuk user dalam penginputan dan pelaporan fasilitas tersebut.",
+	},
+	{
+		question: "Apa keunggulan CN App (CEISA 4.0)?",
+		answer:
+			"CN App yang kami sediakan mengikuti standar CEISA 4.0 (Customs-Excise Information System and Automation) dan mendukung pengelolaan e-consignment note (resi digital) secara aman, cepat, dan terintegrasi, sehingga cocok untuk perusahaan logistik, ekspor-impor, atau distribusi.",
+	},
+	{
+		question: "Apa itu Basic Internal App dan siapa yang cocok menggunakannya?",
+		answer:
+			"Basic Internal App merupakan solusi digital untuk otomatisasi pekerjaan internal, seperti manajemen gudang, absensi, approval, dan pelaporan. Ideal bagi UMKM atau perusahaan yang ingin digitalisasi tanpa biaya tinggi.",
+	},
+	{
+		question: "Apakah solusi yang ditawarkan bisa disesuaikan (custom) dengan kebutuhan perusahaan kami?",
+		answer:
+			"Tentu bisa. Setiap proyek kami mulai dengan analisis kebutuhan bisnis untuk memastikan desain, fitur, dan workflow benar-benar sesuai tujuan perusahaan Anda.",
+	},
+	{
+		question: "Apakah tersedia layanan after-sales dan maintenance?",
+		answer:
+			"Tersedia. Kami menyediakan layanan maintenance berkala, bug fixing, update fitur, dan technical support dari tim MIU agar aplikasi Anda selalu optimal dan aman digunakan.",
+	},
+	{
+		question: "Apakah data perusahaan kami akan aman?",
+		answer:
+			"Keamanan adalah prioritas utama kami. Setiap sistem yang kami bangun dilengkapi dengan enkripsi, role-based access, dan sistem autentikasi.",
+	},
+];
 
 const Home: Component = () => {
 	return (
 		<>
-			<div
-				class="flex items-center justify-center w-full h-full min-h-[48rem] relative pt-18 parallax-background"
-				style={{ "background-image": "url('/img/background-server.png')" }}
-			>
-				<div class="flex flex-col w-full px-4 py-12 gap-16">
-					<div class="flex flex-col h-min max-w-4xl space-y-6 p-12 text-sky-950">
-						<h3 class="text-2xl font-semibold">Mitra Inovasi Unggul</h3>
-						<h1 class="text-6xl font-bold">Trusted IT Solutions for Faster Business Operations</h1>
-						<p>Providing Intelligent Software for Efficient Solutions</p>
-						<div class="flex flex-row space-x-2.5">
-							<a href="#contact">
-								<button class="rounded bg-white px-6 py-2 font-medium cursor-pointer">
+			<header class="home-header">
+				<section class="home-hero" aria-labelledby="home-title">
+					<div class="home-hero__inner">
+						<div class="home-hero__brand" data-reveal="left">
+							<img
+								src="/images/Logo%20MIU.webp"
+								alt="Logo Mitra Inovasi Unggul"
+								width="180"
+								height="180"
+							/>
+						</div>
+						<div class="home-hero__content" data-reveal="right">
+							<p class="home-eyebrow">Mitra Inovasi Unggul</p>
+							<h1 id="home-title">Trusted IT Solutions for Faster Business Operations</h1>
+							<p class="home-hero__summary">
+								Tingkatkan efisiensi operasional dengan solusi teknologi yang dirancang untuk kebutuhan
+								bisnis Anda.
+							</p>
+							<div class="home-hero__actions">
+								<A class="home-button home-button--primary" href="/contact">
 									Schedule Free Consultation
-								</button>
-							</a>
-							<a href="#content">
-								<button class="rounded border border-sky-950 px-6 py-2 font-medium cursor-pointer">
+								</A>
+								<A class="home-button home-button--light" href="/about">
 									Learn More
-								</button>
-							</a>
+								</A>
+							</div>
 						</div>
 					</div>
-				</div>
-			</div>
+				</section>
+			</header>
 
-			<div class="flex flex-col lg:flex-row justify-center items-center space-y-8 lg:space-y-0 py-6">
-				<img class="w-full max-w-[50%]" src="/img/indonesia.png" />
+			<main>
+				<section class="home-section home-solutions" aria-labelledby="solutions-title">
+					<div class="home-container">
+						<div class="home-section__heading" data-reveal="up">
+							<h2 id="solutions-title">Solution for your Business</h2>
+							<p>
+								Teknologi yang tepat membantu bisnis bergerak lebih cepat, tertata, dan siap berkembang.
+							</p>
+						</div>
 
-				<div id="content" class="flex flex-col space-y-8 px-4 lg:px-8 text-center lg:text-left text-sky-950">
-					<h2 class="text-2xl lg:text-6xl font-extrabold object-cover">24/7 Support</h2>
-					<div class="text-xl font-semibold text-sky-950/75">Melayani client di seluruh Indonesia</div>
-				</div>
-			</div>
-
-			<div class="flex flex-col py-4 lg:py-16 px-4 lg:px-16 bg-gradient-to-b from-sky-200 to-white">
-				<h2 class="text-2xl lg:text-4xl font-bold space-x-1.5">
-					<span class="text-sky-950">Solution for your Business</span>
-				</h2>
-
-				<div class="w-full max-w-[36rem] pt-4 pb-12 text-lg text-sky-950">
-					Highlighting the key features and benefits of the software company's flagship products.
-				</div>
-
-				<div class="grid 2xl:grid-flow-row 2xl:grid-cols-3 py-12 gap-4">
-					<Product
-						title="IT Inventory App"
-						description="Kami percaya efisiensi bukan hanya soal angka, tapi tentang bagaimana teknologi mempermudah manusia. Melalui IT Inventory App, perusahaan dapat memantau seluruh perangkat, lisensi, dan aset digital secara real-time — tanpa lagi laporan manual yang memakan waktu."
-						imageUrl="/img/it-inventory.png"
-					/>
-
-					<Product
-						title="CN App"
-						description="Dalam dunia bisnis yang serba cepat, komunikasi internal yang efisien adalah segalanya. Dengan CN App berbasis CEISA 4.0, kami membantu perusahaan menyatukan data lintas departemen melalui sistem yang aman dan mudah diakses."
-						imageUrl="/img/cn-app.png"
-					/>
-
-					<Product
-						title="Basic Internal App"
-						description="Bagi banyak perusahaan kecil dan menengah, digitalisasi sering terdengar mahal dan rumit. Kami ingin mengubah pandangan itu. Melalui Internal App, kami membantu tim Anda beralih dari proses manual ke sistem digital yang sederhana namun efektif — mulai dari pengajuan approval, absensi, hingga manajemen gudang."
-						imageUrl="/img/basic-app.png"
-					/>
-				</div>
-			</div>
-
-			<div class="flex flex-col py-4 lg:py-16 px-4 lg:px-16">
-				<h2 class="text-2xl lg:text-4xl font-bold space-x-1.5 text-sky-950">Our Work</h2>
-
-				{/* <div class="w-full max-w-[36rem] pt-4 pb-8 text-lg text-sky-950">
-					Lorem ipsum dolor sit amet que spada lorem ipsumin dolor sit
-				</div> */}
-
-				<div class="grid lg:grid-flow-row lg:grid-cols-3 py-12 gap-4">
-					<Insight
-						title="Regional"
-						imageUrl="/img/cities.jpg"
-						description="Dari Pulau Jawa hingga Pulau Sumatera, kami telah berkolaborasi dengan lebih dari 30 perusahaan dalam mengembangkan aplikasi digital yang meningkatkan efisiensi operasional dan keandalan data. Setiap proyek kami dirancang dengan pendekatan profesional, hasil nyata, dan teknologi terkini untuk mendorong pertumbuhan bisnis klien kami."
-					/>
-					<Insight
-						title="CEISA Professional"
-						imageUrl="/img/ceisa.jpg"
-						description="Kami turut berkontribusi dalam pengembangan sistem CEISA 4.0 dengan mendukung digitalisasi proses ekspor-impor Indonesia melalui platform yang aman, modern, dan terintegrasi dengan kebutuhan industri. Solusi IT Inventory kami membantu perusahaan menyiapkan, mengirim, dan memantau dokumen kepabeanan yang terhubung dengan CEISA 4.0 secara lebih mudah, cepat, dan efisien, sekaligus meningkatkan transparansi alur kerja dan data antar lembaga."
-					/>
-					<Insight
-						imageUrl="/img/people_2.jpg"
-						title="Widely Diverse Partners"
-						description="Mulai dari sistem inventaris IT, aplikasi internal kantor, hingga platform CN App (CEISA 4.0), kami membantu perusahaan meningkatkan efisiensi, akurasi, dan pertumbuhan bisnis melalui teknologi yang andal dan terukur. Fleksibilitas kami dalam menyesuaikan sistem membuat setiap aplikasi menjadi relevan, scalable, dan mudah diadopsi oleh tim internal klien."
-					/>
-				</div>
-			</div>
-
-			<div id="faq" class="flex flex-col lg:flex-row py-4 lg:py-16 px-4 lg:px-16 lg:space-x-8">
-				<div class="space-y-8">
-					<h2 class="text-lg lg:text-2xl font-semibold space-x-1.5 text-sky-950">FAQs</h2>
-					<h2 class="text-2xl lg:text-4xl font-bold space-x-1.5 text-sky-950">Most Asked Question</h2>
-
-					<div class="w-full max-w-[36rem] pt-4 pb-8 text-lg text-sky-950">
-						Didn’t find what you’re looking for? Let us know, We’ve got real humans ready to answer.
+						<div class="home-solutions__grid">
+							<For each={solutions}>
+								{(solution) => (
+									<article class="home-solution-card" data-reveal="up">
+										<img
+											src={solution.image}
+											alt={solution.alt}
+											width="160"
+											height="130"
+											loading="lazy"
+										/>
+										<div>
+											<h3>{solution.title}</h3>
+											<p>{solution.description}</p>
+											<A href="/product">
+												Selengkapnya <span aria-hidden="true">→</span>
+											</A>
+										</div>
+									</article>
+								)}
+							</For>
+						</div>
 					</div>
-				</div>
+				</section>
 
-				<div class="flex flex-col grow space-y-4 py-12">
-					<Faq
-						title="Apa itu IT Inventory App dan bagaimana manfaatnya bagi bisnis?"
-						description="IT Inventory App cocok untuk perusahaan yang ingin mendapatkan fasilitas seperti KB,GB,KEK,KITE,dll, App ini akan memberikan kemudahan untuk user dalam penginputan dan pelaporan fasilitas tersebut."
-					/>
-					<Faq
-						title="Apa keunggulan CN App (CEISA 4.0)?"
-						description="CN App yang kami sediakan mengikuti standar CEISA 4.0 (Customs-Excise Information System and Automation) dan mendukung pengelolaan e-consignment note (resi digital) secara aman, cepat, dan terintegrasi, sehingga cocok untuk perusahaan logistik, ekspor-impor, atau distribusi."
-					/>
-					<Faq
-						title="Apa itu Basic Internal App dan siapa yang cocok menggunakannya?"
-						description="Basic Internal App merupakan solusi digital untuk otomatisasi pekerjaan internal, seperti manajemen gudang, absensi, approval, dan pelaporan. Ideal bagi UMKM atau perusahaan yang ingin digitalisasi tanpa biaya tinggi."
-					/>
-					<Faq
-						title="Apakah solusi yang ditawarkan bisa disesuaikan (custom) dengan kebutuhan perusahaan kami?"
-						description="Tentu bisa, setiap proyek kami mulai dengan analisis kebutuhan bisnis untuk memastikan desain, fitur, dan workflow benar-benar sesuai tujuan perusahaan Anda."
-					/>
-					<Faq
-						title="Apakah tersedia layanan after-sales dan maintenance?"
-						description="Tersedia, kami menyediakan layanan maintenance berkala, bug fixing, update fitur, dan technical support dari tim MIU agar aplikasi Anda selalu optimal dan aman digunakan."
-					/>
-					<Faq
-						title="Apakah data perusahaan kami akan aman?"
-						description="Keamanan adalah prioritas utama kami. Setiap sistem yang kami bangun dilengkapi dengan enkripsi, role-based access, dan sistem autentikasi."
-					/>
-				</div>
-			</div>
+				<section class="home-support" aria-labelledby="support-title">
+					<div class="home-container home-support__inner">
+						<img
+							src="/images/indonesia-removebg-preview%201.png"
+							alt="Ilustrasi peta kepulauan Indonesia"
+							width="440"
+							height="240"
+							loading="lazy"
+							data-reveal="left"
+						/>
+						<div data-reveal="right">
+							<h2 id="support-title">24/7 Support</h2>
+							<p>Melayani client di seluruh Indonesia</p>
+						</div>
+					</div>
+				</section>
 
-			<Registration />
+				<section class="home-section home-work" aria-labelledby="work-title">
+					<div class="home-container">
+						<div class="home-section__heading" data-reveal="up">
+							<h2 id="work-title">Our Work</h2>
+						</div>
+						<div class="home-work__list">
+							<For each={projects}>
+								{(project) => (
+									<article class="home-work-card" data-reveal="up">
+										<img src={project.image} alt={project.alt} width="300" height="170" loading="lazy" />
+										<div>
+											<h3>{project.title}</h3>
+											<p>{project.description}</p>
+										</div>
+									</article>
+								)}
+							</For>
+						</div>
+					</div>
+				</section>
+
+				<section class="home-section home-faq" aria-labelledby="faq-title">
+					<div class="home-container home-faq__container">
+						<div class="home-section__heading" data-reveal="up">
+							<p class="home-eyebrow">FAQ</p>
+							<h2 id="faq-title">Most Asked Question</h2>
+							<p>Didn’t find what you’re looking for? Let us know, We’ve got real humans ready to answer.</p>
+						</div>
+						<div class="home-faq__list" data-reveal="up">
+							<For each={faqs}>
+								{(faq) => (
+									<details>
+										<summary>{faq.question}</summary>
+										<div class="home-faq__answer">
+											<p>{faq.answer}</p>
+										</div>
+									</details>
+								)}
+							</For>
+						</div>
+					</div>
+				</section>
+
+				<section class="home-location" aria-labelledby="location-title">
+					<div class="home-container home-location__inner">
+						<div class="home-section__heading" data-reveal="up">
+							<p class="home-eyebrow">Mari mulai percakapan</p>
+							<h2 id="location-title">Bingung mulai dari mana?</h2>
+							<p>Jadwalkan konsultasi bersama tim kami dan temukan solusi untuk bisnis Anda.</p>
+							<A class="home-button home-button--primary" href="/contact">
+								Contact Us
+							</A>
+						</div>
+						<div class="home-location__map" data-reveal="up">
+							<iframe
+								title="Peta lokasi kantor Mitra Inovasi Unggul"
+								src="https://maps.google.com/maps?q=Jl.%20Tanah%20Abang%20II%20No.68A%2C%20Jakarta%20Pusat&t=&z=16&ie=UTF8&iwloc=&output=embed"
+								loading="lazy"
+								referrerpolicy="no-referrer-when-downgrade"
+							/>
+						</div>
+						<address>
+							<strong>Our Office</strong>
+							<br />
+							Jl. Tanah Abang II No.68A, RT.1/RW.5, Petojo Selatan, Kecamatan Gambir, Kota Jakarta Pusat,
+							Daerah Khusus Ibukota Jakarta 10160
+						</address>
+					</div>
+				</section>
+			</main>
 		</>
 	);
 };

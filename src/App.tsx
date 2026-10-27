@@ -1,184 +1,300 @@
 import { A, useLocation } from "@solidjs/router";
-import { createEffect, createSignal, type ParentComponent } from "solid-js";
-import { Icon } from "./components/icon";
+import { createEffect, createSignal, For, onCleanup, onMount, type ParentComponent } from "solid-js";
+
+const navigation = [
+	{
+		label: "About Us",
+		href: "/about",
+		links: [
+			{ label: "Our Timeline", href: "/about#timeline-title" },
+			{ label: "Why Us", href: "/about#why-title" },
+			{ label: "Our commitment", href: "/about#commitment" },
+		],
+	},
+	{
+		label: "Home",
+		href: "/",
+		links: [
+			{ label: "Services", href: "/#solutions-title" },
+			{ label: "Capabilities", href: "/#support-title" },
+			{ label: "FAQ", href: "/#faq-title" },
+		],
+	},
+	{
+		label: "Product",
+		href: "/product",
+		links: [
+			{ label: "All Product", href: "/product#product" },
+			{ label: "IT Inventory (ERP)", href: "/product#product-details-inventory" },
+			{ label: "CN App", href: "/product#product-details-cn-app" },
+			{ label: "Basic Internal App", href: "/product#product-details-internal-app" },
+		],
+	},
+];
+
+const pageMetadata: Record<string, { title: string; description: string }> = {
+	"/": {
+		title: "Home | Mitra Inovasi Unggul",
+		description:
+			"Mitra Inovasi Unggul menghadirkan solusi teknologi informasi, IT Inventory, dan aplikasi digital untuk bisnis yang lebih efisien.",
+	},
+	"/about": {
+		title: "About Us | Mitra Inovasi Unggul",
+		description:
+			"Kenali Mitra Inovasi Unggul, perjalanan, nilai, dan komitmen kami dalam menghadirkan solusi digital industri.",
+	},
+	"/product": {
+		title: "Mitra Inovasi Unggul | Solusi Digital Industri",
+		description: "Solusi digital dan IT Inventory untuk pabrik serta kawasan berikat dari Mitra Inovasi Unggul.",
+	},
+	"/contact": {
+		title: "Contact Us | Mitra Inovasi Unggul",
+		description:
+			"Hubungi Mitra Inovasi Unggul untuk berkonsultasi tentang aplikasi bisnis, IT Inventory, dan integrasi CEISA 4.0.",
+	},
+};
 
 const App: ParentComponent = (props) => {
 	const currentYear = new Date().getFullYear();
-
 	const location = useLocation();
-	const [isMenuShown, setIsMenuShown] = createSignal(false);
+	const [isMenuOpen, setIsMenuOpen] = createSignal(false);
+	const [openSubmenu, setOpenSubmenu] = createSignal("");
 
 	createEffect(() => {
-		if (location.pathname) setIsMenuShown(false);
+		if (location.pathname) {
+			setIsMenuOpen(false);
+			setOpenSubmenu("");
+
+			const metadata = pageMetadata[location.pathname] ?? pageMetadata["/"];
+			document.title = metadata.title;
+			document.querySelector('meta[name="description"]')?.setAttribute("content", metadata.description);
+		}
 	});
+
+	createEffect(() => {
+		if (
+			!location.pathname ||
+			!("IntersectionObserver" in window) ||
+			window.matchMedia("(prefers-reduced-motion: reduce)").matches
+		) {
+			return;
+		}
+
+		document.documentElement.classList.add("has-scroll-reveal");
+		const observer = new IntersectionObserver(
+			(entries, currentObserver) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add("is-visible");
+						currentObserver.unobserve(entry.target);
+					}
+				});
+			},
+			{ threshold: 0.12, rootMargin: "0px 0px -48px 0px" },
+		);
+		const frame = requestAnimationFrame(() => {
+			document.querySelectorAll("[data-reveal]").forEach((element) => {
+				element.classList.add("will-reveal");
+				observer.observe(element);
+			});
+		});
+
+		onCleanup(() => {
+			cancelAnimationFrame(frame);
+			observer.disconnect();
+		});
+	});
+
+	onMount(() => {
+		const handleEscape = (event: KeyboardEvent) => {
+			if (event.key === "Escape") closeNavigation();
+		};
+
+		document.addEventListener("keydown", handleEscape);
+		onCleanup(() => document.removeEventListener("keydown", handleEscape));
+	});
+
+	const closeNavigation = () => {
+		setIsMenuOpen(false);
+		setOpenSubmenu("");
+	};
+
+	const handleNavigationClick = (event: MouseEvent, label: string) => {
+		if (window.matchMedia("(max-width: 900px)").matches && openSubmenu() !== label) {
+			event.preventDefault();
+			setOpenSubmenu(label);
+			return;
+		}
+
+		closeNavigation();
+	};
 
 	return (
 		<>
-			<div class="z-50 fixed top-0 left-0 flex flex-col justify-center w-full py-2 px-8 min-h-16 max-h-max backdrop-blur-3xl bg-black/25 text-neutral-100">
-				<div class="flex justify-between items-center w-full">
-					<img src="/img/miu.png" class="w-12 h-12" alt="" />
+			<nav class="site-nav" aria-label="Navigasi utama">
+				<A class="site-nav__brand" href="/" aria-label="Mitra Inovasi Unggul - Home">
+					<img src="/images/Logo%20MIU.webp" alt="" width="42" height="42" />
+					<span>Mitra Inovasi Unggul</span>
+				</A>
 
-					<div class="hidden lg:block flex space-x-16 font-medium">
-						<A
-							href="/about"
-							class="hover:text-blue-500 outline-2 outline-transparent hover:outline-blue-500 px-2.5 py-1 transition-colors"
-						>
-							About Us
-						</A>
+				<button
+					class="site-nav__toggle"
+					type="button"
+					aria-label={isMenuOpen() ? "Tutup navigasi" : "Buka navigasi"}
+					aria-controls="primary-navigation"
+					aria-expanded={isMenuOpen()}
+					onClick={() => {
+						setIsMenuOpen((isOpen) => !isOpen);
+						setOpenSubmenu("");
+					}}
+				>
+					<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+						<path
+							d="M4 6h16M4 12h16M4 18h16"
+							stroke="currentColor"
+							stroke-width="1.8"
+							stroke-linecap="round"
+						/>
+					</svg>
+				</button>
 
-						<A
-							href="/"
-							class="hover:text-blue-500 outline-2 outline-transparent hover:outline-blue-500 px-2.5 py-1 transition-colors"
-						>
-							Home
-						</A>
+				<div
+					class={`site-nav__links${isMenuOpen() ? " is-open" : ""}`}
+					id="primary-navigation"
+				>
+					<For each={navigation}>
+						{(item) => {
+							const isActive = () =>
+								item.href === "/" ? location.pathname === "/" : location.pathname.startsWith(item.href);
 
-						<A
-							href="/product"
-							class="hover:text-blue-500 outline-2 outline-transparent hover:outline-blue-500 px-2.5 py-1 transition-colors"
-						>
-							Product
-						</A>
-					</div>
-
+							return (
+								<div
+									class={`site-nav__item${openSubmenu() === item.label ? " is-open" : ""}`}
+									onPointerEnter={(event) => {
+										if (event.pointerType !== "touch") setOpenSubmenu(item.label);
+									}}
+									onPointerLeave={(event) => {
+										if (event.pointerType !== "touch") setOpenSubmenu("");
+									}}
+								>
+									<A
+										href={item.href}
+										classList={{ "is-active": isActive() }}
+										aria-controls={`${item.label.toLowerCase().replaceAll(" ", "-")}-submenu`}
+										aria-expanded={openSubmenu() === item.label}
+										aria-current={isActive() ? "page" : undefined}
+										onClick={(event) => handleNavigationClick(event, item.label)}
+									>
+										{item.label}
+									</A>
+									<ul
+										class="site-nav__submenu"
+										id={`${item.label.toLowerCase().replaceAll(" ", "-")}-submenu`}
+									>
+										<For each={item.links}>
+											{(link) => (
+												<li>
+													<A href={link.href} onClick={closeNavigation}>
+														{link.label}
+													</A>
+												</li>
+											)}
+										</For>
+									</ul>
+								</div>
+							);
+						}}
+					</For>
 					<A
 						href="/contact"
-						class="hidden lg:block bg-white px-4 py-1.5 rounded-xl text-neutral-700 font-bold"
+						classList={{ "is-active": location.pathname.startsWith("/contact") }}
+						aria-current={location.pathname.startsWith("/contact") ? "page" : undefined}
+						onClick={closeNavigation}
 					>
-						Contact Us
+						Contact
 					</A>
-
-					<button
-						onClick={() => setIsMenuShown((v) => !v)}
-						class="block lg:hidden p-2.5"
-						aria-label={isMenuShown() ? "Close navigation menu" : "Open navigation menu"}
-						aria-expanded={isMenuShown()}
-						aria-controls="mobile-navigation"
-					>
-						<Icon name="menu" size="xl"></Icon>
-					</button>
 				</div>
-				<div
-					id="mobile-navigation"
-					class={`grid overflow-hidden transition-[grid-template-rows] duration-300 ease-in-out lg:hidden ${
-						isMenuShown() ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-					}`}
-					aria-hidden={!isMenuShown()}
-					inert={!isMenuShown()}
-				>
-					<div class="min-h-0 overflow-hidden">
-						<div
-							class={`py-8 transition-opacity duration-200 ${isMenuShown() ? "opacity-100" : "opacity-0"}`}
-						>
-							<ul class="space-y-4">
-								<li>
-									<a class="hover:text-yellow-400 transition-colors" href="/about">
-										About Us
-									</a>
-								</li>
-								<li>
-									<a class="hover:text-yellow-400 transition-colors" href="/">
-										Home
-									</a>
-								</li>
-								<li>
-									<a class="hover:text-yellow-400 transition-colors" href="/about#product">
-										Product
-									</a>
-								</li>
-								<li class="py-2">
-									<A
-										href="/contact"
-										class="bg-white px-4 py-1.5 rounded-xl text-neutral-700 font-bold"
-									>
-										Contact Us
-									</A>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
+			</nav>
 
 			{props.children}
 
-			<div class="flex items-center justify-center py-12 px-4">
-				<div class="flex flex-col">
-					<div class="flex lg:flex-row flex-col w-full max-w-[72rem] space-x-12 space-y-12">
-						<div class="flex flex-col space-x-4 space-y-4">
-							<div class="flex flex-row items-center space-x-4">
-								<img src="/img/miu.png" class="w-12 h-12" alt="" />
-								<div class="font-medium text-xl text-sky-950">Mitra Inovasi Unggul</div>
-							</div>
-							<p class="text-sm text-neutral-600">
-								MIU dari PT. Mitra Inovasi Unggul adalah Software House yang didirikan untuk menyediakan
-								semua jenis Aplikasi Pembantu Perusahaan untuk mendapat Keunggulan Bisnis.
-							</p>
-						</div>
+			<footer class="site-footer">
+				<div class="site-footer__inner">
+					<section class="site-footer__about" aria-labelledby="footer-brand">
+						<A class="site-footer__brand" href="/" id="footer-brand">
+							<img src="/images/Logo%20MIU.webp" alt="" width="40" height="40" loading="lazy" />
+							<span>Mitra Inovasi Unggul</span>
+						</A>
+						<p>
+							MIU dari PT. Mitra Inovasi Unggul adalah Software House yang didirikan untuk menyediakan
+							semua jenis Aplikasi Pembantu Perusahaan untuk mendapatkan Keunggulan Bisnis.
+						</p>
+					</section>
 
-						<div class="flex flex-col shrink-0 min-w-48 space-y-4">
-							<div class="font-medium text-xl text-sky-950">Informasi</div>
-							<ul class="space-y-4 text-sm text-neutral-600">
-								<li>
-									<a class="hover:text-yellow-400 transition-colors" href="/about">
-										About Us
-									</a>
-								</li>
-								<li>
-									<a class="hover:text-yellow-400 transition-colors" href="/#faq">
-										FAQ
-									</a>
-								</li>
-								<li>
-									<a class="hover:text-yellow-400 transition-colors" href="/about#product">
-										Career
-									</a>
-								</li>
-								<li>
-									<a class="hover:text-yellow-400 transition-colors" href="/">
-										Blog
-									</a>
-								</li>
-							</ul>
-						</div>
+					<nav class="site-footer__information" aria-label="Informasi">
+						<h2>Informasi</h2>
+						<A href="/about">About Us</A>
+						<A href="/#faq-title">FAQs</A>
+						<A href="/contact">Contact Us</A>
+					</nav>
 
-						<div class="flex flex-col space-y-4">
-							<div class="font-medium text-xl text-sky-950">Contact MIU</div>
-							<ul class="text-sm space-y-4 text-neutral-600">
-								<li class="flex space-x-2.5 items-center">
-									<Icon name="location" size="lg" class="shrink-0"></Icon>
-									<address>
-										Jl. Tanah Abang II No.68A 1, RT.1/RW.5, Petojo Sel., Kecamatan Gambir, Kota
-										Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10160
-									</address>
-								</li>
-								<li class="flex space-x-2.5 items-center">
-									<Icon name="phone" size="lg" class="shrink-0"></Icon>
-									<a
-										class="hover:text-yellow-400 transition-colors"
-										target="_blank"
-										href="https://api.whatsapp.com/send?phone=6285814409262"
-									>
-										+62 858 1440 9262
-									</a>
-								</li>
-								<li class="flex space-x-2.5 items-center">
-									<Icon name="email" size="lg" class="shrink-0"></Icon>
-									<a
-										class="hover:text-yellow-400 transition-colors"
-										href="mailto:ptmitrainovasiunggul@yahoo.com"
-									>
-										ptmitrainovasiunggul@yahoo.com
-									</a>
-								</li>
-							</ul>
-						</div>
-					</div>
-					<div class="flex items-center h-16 text-neutral-400">
-						Copyright &#169; {currentYear} PT.Mitra Inovasi Unggul
-					</div>
+					<nav class="site-footer__products" aria-label="Product">
+						<h2>Product</h2>
+						<A href="/product#product-details-inventory">IT Inventory (ERP)</A>
+						<A href="/product#product-details-cn-app">CN App</A>
+						<A href="/product#product-details-internal-app">Basic Internal App</A>
+					</nav>
+
+					<section class="site-footer__contact" aria-labelledby="footer-contact-title">
+						<h2 id="footer-contact-title">Contact MIU</h2>
+						<address>
+							<svg viewBox="0 0 24 24" aria-hidden="true">
+								<path d="M12 22s8-7.1 8-14A8 8 0 1 0 4 8c0 6.9 8 14 8 14Z" />
+								<circle cx="12" cy="8" r="2.5" />
+							</svg>
+							<span>
+								Jl. Tanah Abang II No.68A, RT.1/RW.5, Petojo Selatan, Kecamatan Gambir, Kota Jakarta
+								Pusat, Daerah Khusus Ibukota Jakarta 10160
+							</span>
+						</address>
+						<a href="tel:+6285814409262">
+							<svg viewBox="0 0 24 24" aria-hidden="true">
+								<path d="m7.2 3.5 3 4.2-2 2a14.4 14.4 0 0 0 6.1 6.1l2-2 4.2 3-.9 3.2c-.2.7-.9 1.1-1.6 1C9.1 19.7 4.3 14.9 3 8c-.1-.7.3-1.4 1-1.6l3.2-.9Z" />
+							</svg>
+							<span>+62 858 1440 9262</span>
+						</a>
+						<a href="mailto:ptmitrainovasinggul@yahoo.com">
+							<svg viewBox="0 0 24 24" aria-hidden="true">
+								<path d="M3 5h18v14H3V5Zm1.5 1.5 7.5 6 7.5-6" />
+							</svg>
+							<span>ptmitrainovasinggul@yahoo.com</span>
+						</a>
+					</section>
+
+					<p class="site-footer__copyright">
+						Copyright &copy; {currentYear} PT. Mitra Inovasi Unggul
+					</p>
 				</div>
-			</div>
+			</footer>
+
+			<A class="floating-contact" href="/contact">
+				<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<path
+						d="M7 4.75h10A2.25 2.25 0 0 1 19.25 7v7A2.25 2.25 0 0 1 17 16.25h-5.5L7 20v-3.75A2.25 2.25 0 0 1 4.75 14V7A2.25 2.25 0 0 1 7 4.75Z"
+						stroke="currentColor"
+						stroke-width="1.8"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+					<path
+						d="M8 9h8M8 12h5"
+						stroke="currentColor"
+						stroke-width="1.8"
+						stroke-linecap="round"
+					/>
+				</svg>
+				<span>Contact us</span>
+			</A>
 		</>
 	);
 };

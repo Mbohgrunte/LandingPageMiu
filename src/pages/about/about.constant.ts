@@ -66,7 +66,7 @@ export const TIMELINES = [
 export const WHY_US = [
 	{
 		title: "Berpengalaman sejak 2016",
-		desc: "Terbukti & berpengalaman Sejak 2016, MIU telah dipercaya menangani keperluan software untuk perusahaan.",
+		desc: "Terbukti berpengalaman sejak 2016, MIU telah dipercaya menangani keperluan software untuk perusahaan.",
 	},
 	{
 		title: "Terintegrasi dengan CEISA 4.0",
@@ -74,11 +74,11 @@ export const WHY_US = [
 	},
 	{
 		title: "Akses Global & Multibahasa",
-		desc: "Aplikasi berbasis web yang dapat diakses dari seluruh dunia, dilengkapi dengan fitur dan laporan dalam berbagai bahasa.",
+		desc: "Aplikasi berbasis web yang dapat diakses dari seluruh dunia, dilengkapi fitur dan laporan dalam berbagai bahasa.",
 	},
 	{
 		title: "Dukungan Bilingual & Multibahasa",
-		desc: "Tim support profesional MIU siap membantu dalam Bahasa Indonesia, Inggris, dan Mandarin—serta bahasa lainnya sesuai kebutuhan Anda.",
+		desc: "Tim support profesional MIU siap membantu dalam Bahasa Indonesia, Inggris, dan Mandarin sesuai kebutuhan Anda.",
 	},
 	{
 		title: "Fokus pada Efisiensi & Inovasi",
@@ -90,17 +90,17 @@ export const WE_VALUE = [
 	{
 		title: "Responsible",
 		desc: "Kami bertanggung jawab dengan semua tugas yang telah dipercayai.",
-		iconPath: "/img/responsibility.png",
+		iconPath: "/images/responsibility.jpg",
 	},
 	{
 		title: "Integrity",
-		desc: "Kami mengedepankan integritas dengan menjaga kerahasiaan data dan nama baik Anda",
-		iconPath: "/img/integrity.png",
+		desc: "Kami mengedepankan integritas dengan menjaga kerahasiaan data dan nama baik Anda.",
+		iconPath: "/images/integrity.jpg",
 	},
 	{
 		title: "Innovation",
-		desc: "Kami akan setia memberikan inovasi terbaru di perjalanan bisnis Anda",
-		iconPath: "/img/inovation.png",
+		desc: "Kami akan setia memberikan inovasi terbaru di perjalanan bisnis Anda.",
+		iconPath: "/images/inovation.jpg",
 	},
 ];
 
@@ -118,6 +118,6 @@ export const COMMITMENTS = [
 	{
 		title: "Meneruskan Service After-Sales",
 		description:
-			"Hubungan kami tidak berakhir setelah aplikasi SIAP DIPAKAI. Kami terus mendampingi klien melalui update fitur, monitoring, dan technical support jika diperlukan. Dengan tujuan agar sistem lebih efisien, tetap optimal, aman, dan baik seiring pertumbuhan bisnis Anda.",
+			"Hubungan kami tidak berakhir setelah aplikasi siap dipakai. Kami terus mendampingi klien melalui update fitur, monitoring, dan technical support jika diperlukan, agar sistem tetap efisien, optimal, aman, dan baik seiring pertumbuhan bisnis Anda.",
 	},
 ];
